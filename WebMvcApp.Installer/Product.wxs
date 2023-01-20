@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="WebMvcApp Installer" Language="1033" Version="1.0.0.0" Manufacturer="YourCompany" UpgradeCode="673be2b8-60d0-4a04-8424-0af80b9c8bd9">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate />
+
+		<Feature Id="ProductFeature" Title="WebMvcApp Installer" Level="1">
+      <!-- heat reference: MikoConverterService.wxs -->
+      <ComponentGroupRef Id="WebMvcAppProject"/>
+			<ComponentGroupRef Id="ProductComponents" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="WebMvcApp" />
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+			<!-- <Component Id="ProductComponent"> -->
+				<!-- TODO: Insert files, registry keys, and other resources here. -->
+			<!-- </Component> -->
+             <!-- service registration-->
+      <Component Id="ProductComponent">
+        <File Id="WebMvcAppEXE" 
+              Name="WebMvcApp.exe" 
+              DiskId="1"
+              Source="$(var.WebMvcApp.TargetDir)\WebMvcApp.exe"
+              Vital="yes"
+              KeyPath="yes"
+              />
+        <ServiceInstall Id="ServiceInstaller"
+                        Type="ownProcess"
+                        Vital="yes"
+                        Name ="WebMvcAppService"
+                        DisplayName="WebMvcApp Windows Service"
+                        Description="A windows service that host the Web Mvc App."
+                        Start="auto"
+                        Account="LocalSystem"
+                        ErrorControl="normal"/>
+        <ServiceControl Id="StartService" 
+                        Start="install" 
+                        Stop="both" 
+                        Remove="uninstall" 
+                        Name="WebMvcAppService" 
+                        Wait="yes"/>
+      </Component>
+
+		</ComponentGroup>
+	</Fragment>
+</Wix>
